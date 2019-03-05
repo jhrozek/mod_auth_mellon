@@ -222,7 +222,7 @@ static void register_hooks(apr_pool_t *p)
      * Therefore this hook must run before any handler that may check
      * r->handler and decide that it is the only handler for this URL.
      */
-    ap_hook_handler(am_handler, NULL, NULL, APR_HOOK_FIRST);
+    ap_hook_handler(am_handler, NULL, NULL, APR_HOOK_REALLY_FIRST);
 
 #ifdef ENABLE_DIAGNOSTICS
     ap_hook_open_logs(am_diag_log_init,NULL,NULL,APR_HOOK_MIDDLE);
