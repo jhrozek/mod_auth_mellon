@@ -55,6 +55,10 @@ AS_IF([test "x$enable_diagnostics" != xno],
 # Replace any occurances of @APXS2@ with the value of $APXS2 in the Makefile.
 AC_SUBST(APXS2)
 
+PKG_CHECK_MODULES(APR, [apr-1, apr-util-1])
+AC_SUBST(APR_CFLAGS)
+AC_SUBST(APR_LIBS)
+
 # We need the lasso library for SAML2 communication.
 PKG_CHECK_MODULES(LASSO, lasso)
 saved_LIBS=$LIBS; LIBS="$LIBS $LASSO_LIBS";
