@@ -118,6 +118,9 @@ int am_validate_redirect_url(request_rec *r, const char *url)
     if (uri.scheme) {
         /* http and https schemes without hostname are invalid. */
         if (!uri.hostname) {
+            AM_LOG_RERROR(APLOG_MARK, APLOG_ERR, 0, r,
+                          "Preventing redirect with scheme but no hostname: %s",
+                          url);
             return HTTP_BAD_REQUEST;
         }
         if (strcasecmp(uri.scheme, "http")
