@@ -108,6 +108,24 @@ static int test_am_validate_redirect_url(apr_pool_t *pool,
                                    "http:www.malicious.com");
     if (ret == OK) return ret;
 
+    /* Negative test: Relative path must begin with a single slash */
+    ret = am_validate_redirect_url(request,
+                                   "myapp/logout.html");
+    if (ret == OK) return ret;
+
+    /* OTOH, a single slash can be allowed */
+    ret = am_validate_redirect_url(request, "/");
+    if (ret != OK) return ret;
+
+    /* OTOH, a single slash can be allowed */
+    ret = am_validate_redirect_url(request, "/myapp/logout.html");
+    if (ret != OK) return ret;
+
+    /* Negative test: Relative path must not begin with a double slash */
+    ret = am_validate_redirect_url(request,
+                                   "//myapp/logout.html");
+    if (ret == OK) return ret;
+
     return APR_SUCCESS;
 }
 

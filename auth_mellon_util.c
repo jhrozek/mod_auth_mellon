@@ -133,7 +133,30 @@ int am_validate_redirect_url(request_rec *r, const char *url)
     }
 
     if (!uri.hostname) {
-        return OK; /* No hostname to check. */
+        /* No hostname to check. Instead, let's make sure that the path starts
+         * with a single "/" but not "//"
+         */
+        if (uri.path == NULL) {
+            AM_LOG_RERROR(APLOG_MARK, APLOG_ERR, 0, r,
+                          "No path in relative redirect with url=%s", url);
+            return HTTP_BAD_REQUEST;
+        }
+
+        if (strstr(uri.path, "/") != uri.path) {
+            AM_LOG_RERROR(APLOG_MARK, APLOG_ERR, 0, r,
+                          "Relative path must start with a single / (url=%s)\n",
+                          url);
+            return HTTP_BAD_REQUEST;
+        }
+
+        if (strstr(uri.path, "//") == uri.path) {
+            AM_LOG_RERROR(APLOG_MARK, APLOG_ERR, 0, r,
+                          "Relative path cannot start with // (url=%s)\n",
+                          url);
+            return HTTP_BAD_REQUEST;
+        }
+
+        return OK;
     }
 
     for (int i = 0; cfg->redirect_domains[i] != NULL; i++) {
